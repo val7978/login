@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Регистрация работ{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/style6.css' %}">
+    {% if request.path == '/dashboard/' %}
+            <link rel="stylesheet" href="{% static 'css/style7.css' %}">
+    {% endif %}
     <style>
         .navbar {
             background-color: #333;

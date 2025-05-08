@@ -120,3 +120,10 @@ class CustomSetPasswordForm(SetPasswordForm):
             'class': 'form-input'
         })
     )
+
+from .models import Profile
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['avatar', 'bio']

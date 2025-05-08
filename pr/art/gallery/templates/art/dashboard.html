@@ -1,34 +1,71 @@
 {% extends 'base.html' %}
-
-{% block title %}Личный кабинет{% endblock %}
+{% load static %}
 
 {% block content %}
-<div class="login-container">
-    <h1>Личный кабинет</h1>
-    
-    <div class="user-info">
-        <p><strong>Имя пользователя:</strong> {{ user.username }}</p>
-        <p><strong>Email:</strong> {{ user.email }}</p>
-        {% if user.phone %}<p><strong>Телефон:</strong> {{ user.phone }}</p>{% endif %}
-        {% if user.portfolio %}<p><strong>Портфолио:</strong> <a href="{{ user.portfolio }}">{{ user.portfolio }}</a></p>{% endif %}
+<div class="wide-dashboard">
+    <div class="user-header">
+        <img src="{% if user.profile.avatar %}{{ user.profile.avatar.url }}{% else %}{% static 'img/default-avatar.png' %}{% endif %}" 
+             class="user-avatar-large">
+        <div class="user-info">
+            <h1>{{ user.username }}</h1>
+            <p class="user-email">{{ user.email }}</p>
+            {% if user.phone %}<p class="user-phone">{{ user.phone }}</p>{% endif %}
+        </div>
     </div>
 
-    <h2>Ваши работы</h2>
-    {% if works %}
-        <div class="works-list">
+    <div class="dashboard-menu-wide">
+        <div class="menu-item-wide" onclick="location.href='{% url 'favorites' %}'">
+            <img src="{% static 'img/избранное.png' %}" alt="">
+            <span>Избранное ({{ user.favorite_works.count }})</span>
+        </div>
+        
+        <div class="menu-item-wide" onclick="location.href='{% url 'cart' %}'">
+            <img src="{% static 'img/корзина.png' %}" alt="">
+            <span>Корзина</span>
+        </div>
+        
+        <div class="menu-item-wide" id="settings-btn">
+            <img src="{% static 'img/настройки.png' %}" alt="">
+            <span>Настройки</span>
+        </div>
+        
+        <div class="menu-item-wide logout-btn" onclick="logout()">
+            <img src="{% static 'img/выход.png' %}" alt="">
+            <span>Выход</span>
+        </div>
+    </div>
+
+    <div class="dashboard-content-wide">
+        <h2>Мои работы</h2>
+        {% if works %}
+        <div class="works-grid">
             {% for work in works %}
-                <div class="work-item">
-                    <h3>{{ work.title }}</h3>
-                    <p>Статус: {{ work.get_status_display }}</p>
-                    <p>Дата: {{ work.created_at|date:"d.m.Y" }}</p>
-                    <a href="{{ work.file.url }}" class="login-button">Скачать</a>
-                </div>
+            <div class="work-card">
+                <h3>{{ work.title }}</h3>
+                <p>Статус: {{ work.get_status_display }}</p>
+                <a href="{{ work.file.url }}" class="download-btn">Скачать</a>
+            </div>
             {% endfor %}
         </div>
-    {% else %}
-        <p>У вас пока нет зарегистрированных работ.</p>
-    {% endif %}
-
-    <a href="{% url 'register_work' %}" class="login-button">Добавить работу</a>
+        {% else %}
+        <div class="empty-state">
+            <p>У вас пока нет работ</p>
+            <a href="{% url 'register_work' %}" class="add-work-btn">Добавить работу</a>
+        </div>
+        {% endif %}
+    </div>
 </div>
+
+<script>
+function logout() {
+    if(confirm("Вы уверены, что хотите выйти?")) {
+        window.location.href = "{% url 'logout' %}";
+    }
+}
+
+document.getElementById('settings-btn').addEventListener('click', function() {
+    // Можно реализовать модальное окно настроек
+    alert('Настройки профиля (функционал в разработке)');
+});
+</script>
 {% endblock %}

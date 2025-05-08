@@ -186,3 +186,36 @@ def password_reset_confirm_view(request, token):
 def dashboard_view(request):
     works = Work.objects.filter(author=request.user)
     return render(request, 'art/dashboard.html', {'works': works})
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import Work, UserActivity
+
+@login_required
+def dashboard_view(request):
+    # Получаем работы пользователя
+    works = Work.objects.filter(author=request.user)
+    
+    # Создаем контекст для шаблона
+    context = {
+        'works_count': works.count(),
+        'favorites_count': request.user.favorites.count(),  # Предполагается наличие модели Favorite
+        'orders_count': request.user.orders.count(),       # Предполагается наличие модели Order
+        'recent_activities': UserActivity.objects.filter(user=request.user).order_by('-timestamp')[:5],
+    }
+    
+    return render(request, 'art/dashboard.html', context)
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import Work, UserActivity
+
+@login_required
+def dashboard_view(request):
+    context = {
+        'works_count': Work.objects.filter(author=request.user).count(),
+        'favorites_count': request.user.get_favorites_count(),
+        'orders_count': request.user.get_orders_count(),
+        'recent_activities': UserActivity.objects.filter(user=request.user).order_by('-timestamp')[:5],
+    }
+    return render(request, 'art/dashboard.html', context)
