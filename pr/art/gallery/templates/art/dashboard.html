@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Личный кабинет{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <h1>Личный кабинет</h1>
+    
+    <div class="user-info">
+        <p><strong>Имя пользователя:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        {% if user.phone %}<p><strong>Телефон:</strong> {{ user.phone }}</p>{% endif %}
+        {% if user.portfolio %}<p><strong>Портфолио:</strong> <a href="{{ user.portfolio }}">{{ user.portfolio }}</a></p>{% endif %}
+    </div>
+
+    <h2>Ваши работы</h2>
+    {% if works %}
+        <div class="works-list">
+            {% for work in works %}
+                <div class="work-item">
+                    <h3>{{ work.title }}</h3>
+                    <p>Статус: {{ work.get_status_display }}</p>
+                    <p>Дата: {{ work.created_at|date:"d.m.Y" }}</p>
+                    <a href="{{ work.file.url }}" class="login-button">Скачать</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>У вас пока нет зарегистрированных работ.</p>
+    {% endif %}
+
+    <a href="{% url 'register_work' %}" class="login-button">Добавить работу</a>
+</div>
+{% endblock %}
